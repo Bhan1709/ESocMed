@@ -1,11 +1,10 @@
 import express from "express";
-import { verify } from "jsonwebtoken";
 import {
     getUser,
     getUserFriends,
     addRemoveFriends
-} from "../controllers/users";
-import { verifyToken } from "../middleware/auth";
+} from "../controllers/users.js";
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 

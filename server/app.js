@@ -7,12 +7,12 @@ import helmet, { crossOriginResourcePolicy } from "helmet";
 import morgan from "morgan";
 import path from "path"; //native Node lib
 import { fileURLToPath } from "url"; //native Node lib
-import { register } from "./controllers/auth";
-import { createPost } from "./controllers/posts";
-import authRoutes from "./routes/auth";
-import userRoutes from "./routes/users";
-import postRoutes from "./routes/posts";
-import { verifyToken } from "./middleware/auth";
+import { register } from "./controllers/auth.js";
+import { createPost } from "./controllers/posts.js";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import postRoutes from "./routes/posts.js";
+import { verifyToken } from "./middleware/auth.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
