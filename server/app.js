@@ -7,6 +7,9 @@ import helmet, { crossOriginResourcePolicy } from "helmet";
 import morgan from "morgan";
 import path from "path"; //native Node lib
 import { fileURLToPath } from "url"; //native Node lib
+import { register } from "./controllers/auth";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/users";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -38,3 +41,10 @@ mongoose.set("strictQuery", false);
 mongoose.connect(process.env.MONGO_URL).then(() => {
     app.listen(port, () => console.log(`Server Port: ${port}`));
 }).catch((err) => console.log(`${err} did not connect.`));
+
+/* ROUTES WITH FILES */
+app.post("/auth/register", upload.single("picture"), register);
+
+/* ROUTES */
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
