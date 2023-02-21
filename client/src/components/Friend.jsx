@@ -17,8 +17,9 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     const primaryDark = palette.primary.dark;
     const main = palette.neutral.main;
     const medium = palette.neutral.medium;
-
     const isFriend = friends.find(friend => friend._id === friendId);
+    const isNotCurrUser = _id === friendId ? false : true;
+
     const patchFriend = async () => {
         const response = await fetch(`http://localhost:3001/users/${_id}/${friendId}`, {
             method: "PATCH",
@@ -30,6 +31,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         const data = await response.json();
         dispatch(setFriends({ friends: data }));
     }
+
     return <FlexBetween>
         <FlexBetween gap="1rem">
             <UserImage image={userPicturePath} size="55px" />
@@ -57,13 +59,14 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
                 </Typography>
             </Box>
         </FlexBetween>
-        <IconButton
-            onClick={() => patchFriend()}
-            sx={{ backgroundColor: primaryLight, padding: "0.6rem" }}
-        >
-            {isFriend ? <PersonRemoveOutlined sx={{ color: primaryDark }} />
-                : <PersonAddOutlined sx={{ color: primaryDark }} />}
-        </IconButton>
+        {isNotCurrUser && (
+            <IconButton
+                onClick={() => patchFriend()}
+                sx={{ backgroundColor: primaryLight, padding: "0.6rem" }}
+            >
+                {isFriend ? <PersonRemoveOutlined sx={{ color: primaryDark }} />
+                    : <PersonAddOutlined sx={{ color: primaryDark }} />}
+            </IconButton>)}
     </FlexBetween>
 }
 
