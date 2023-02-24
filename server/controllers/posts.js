@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import Comment from "../models/Comment.js";
 
 /* CREATE */
 export const createPost = async (req, res) => {
@@ -73,7 +74,9 @@ export const likePost = async (req, res) => {
 export const deletePost = async (req, res) => {
     try {
         const { id } = req.params;
-        await Post.findByIdAndDelete(id);
+        const deletedPost = await Post.findByIdAndDelete(id);
+
+        deletedPost.comments.forEach(async (commentId) => (await Comment.findByIdAndDelete(commentId)));
 
         const posts = await Post.find().sort({ createdAt: -1 });
         res.status(200).json(posts);

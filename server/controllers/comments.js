@@ -1,22 +1,34 @@
 import User from "../models/User.js";
+import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import Reply from "../models/Reply.js";
 
 /* CREATE */
 export const createComment = async (req, res) => {
     try {
-        const { postId, userId, comment } = req.body;
+        const { userId, comment } = req.body;
+        const { postId } = req.params;
         const user = await User.findById(userId);
         const newComment = new Comment({
             postId,
             userId,
             userName: `${user.firstName} ${user.lastName}`,
             comment,
-            likes: {}
+            likes: {},
+            replies: []
         });
-        await newComment.save();
+        const post = await Post.findById(postId);
+        post.comments.push(newComment._id);
 
-        const comments = await Comment.find({ postId }).sort({ createdAt: -1 });
-        res.status(201).json(comments);
+        await newComment.save();
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            { comments: post.comments },
+            { new: true } //returns the modified object rather than original
+        );
+
+        const postComments = await Comment.find({ postId }).sort({ createdAt: -1 });
+        res.status(201).json({ postComments, updatedPost });
     } catch (err) {
         res.status(409).json({ message: err.message });
     }
@@ -62,7 +74,9 @@ export const likeComment = async (req, res) => {
 export const deleteComment = async (req, res) => {
     try {
         const { id, postId } = req.params;
-        await Comment.findByIdAndDelete(id);
+        const deletedComment = await Comment.findByIdAndDelete(id);
+
+        deletedComment.replies.forEach(async (replyId) => (await Reply.findByIdAndDelete(replyId)));
 
         const comments = await Comment.find(postId).sort({ createdAt: -1 });
         res.status(200).json(comments);

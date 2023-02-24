@@ -20,6 +20,10 @@ const CommentSchema = new mongoose.Schema({
     likes: {
         type: Map,
         of: Boolean
+    },
+    replies: {
+        type: Array,
+        default: []
     }
 }, { timestamps: true });
 

@@ -18,6 +18,8 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost, setPosts } from "state";
+import AddCommentWidget from "./AddCommentWidget";
+import CommentsWidget from "./CommentsWidget";
 
 const PostWidget = ({
     postId,
@@ -28,13 +30,14 @@ const PostWidget = ({
     picturePath,
     userPicturePath,
     likes,
-    comments
+    commentIds
 }) => {
     const [isComments, setIsComments] = useState(false);
+    const [comments, setComments] = useState([]);
     const dispatch = useDispatch();
     const token = useSelector(state => state.token);
     const loggedInUserId = useSelector(state => state.user._id);
-    const posts = useSelector(state => state.posts);
+    //const posts = useSelector(state => state.posts);
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
 
@@ -100,7 +103,7 @@ const PostWidget = ({
                     <IconButton onClick={() => setIsComments(!isComments)}>
                         <ChatBubbleOutlineOutlined />
                     </IconButton>
-                    <Typography>{comments.length}</Typography>
+                    <Typography>{commentIds.length}</Typography>
                 </FlexBetween>
 
             </FlexBetween>
@@ -116,15 +119,16 @@ const PostWidget = ({
         </FlexBetween>
         {isComments && (
             <Box marginTop="0.5rem">
-                {comments.map((comment, i) => (
-                    <Box key={`${name}-${i}`}>
-                        <Divider />
-                        <Typography sx={{ color: main, margin: "0.5rem 0", paddingLeft: "1rem" }}>
-                            {comment}
-                        </Typography>
-                    </Box>
-                ))}
+                <AddCommentWidget
+                    postId={postId}
+                    setComments={setComments}
+                />
                 <Divider />
+                <CommentsWidget
+                    postId={postId}
+                    comments={comments}
+                    setComments={setComments}
+                />
             </Box>
         )}
     </WidgetWrapper>
