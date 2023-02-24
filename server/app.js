@@ -12,6 +12,8 @@ import { createPost } from "./controllers/posts.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
+import commentRoutes from "./routes/comments.js";
+import replyRoutes from "./routes/replies.js";
 import { verifyToken } from "./middleware/auth.js";
 
 /*import User from "./models/User.js";
@@ -64,3 +66,5 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/comments", commentRoutes);
+app.use("/replies", replyRoutes);
