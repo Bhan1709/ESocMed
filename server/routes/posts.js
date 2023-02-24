@@ -2,7 +2,8 @@ import express from "express";
 import {
     getFeedPosts,
     getUserPosts,
-    likePost
+    likePost,
+    deletePost
 } from "../controllers/posts.js";
 import { verifyToken } from "../middleware/auth.js";
 
@@ -14,5 +15,8 @@ router.get("/:userId", verifyToken, getUserPosts);
 
 /* UPDATE */
 router.patch("/:id/like", verifyToken, likePost);
+
+/* DELETE */
+router.delete("/:id", verifyToken, deletePost);
 
 export default router;

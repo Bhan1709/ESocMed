@@ -18,7 +18,7 @@ export const createPost = async (req, res) => {
         });
         await newPost.save();
 
-        const posts = await Post.find();
+        const posts = await Post.find().sort({ updatedAt: -1 });
         res.status(201).json(posts);
     } catch (err) {
         res.status(409).json({ message: err.message });
@@ -28,7 +28,7 @@ export const createPost = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
     try {
-        const posts = await Post.find();
+        const posts = await Post.find().sort({ updatedAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
         res.status(404).json({ message: err.message });
@@ -38,7 +38,7 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res) => {
     try {
         const { userId } = req.params;
-        const posts = await Post.find({ userId });
+        const posts = await Post.find({ userId }).sort({ updatedAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
         res.status(404).json({ message: err.message });
@@ -64,6 +64,19 @@ export const likePost = async (req, res) => {
             { new: true } //returns the modified object rather than original
         );
         res.status(200).json(updatedPost);
+    } catch (err) {
+        res.status(404).json({ message: err.message });
+    }
+}
+
+/* DELETE */
+export const deletePost = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedPost = await Post.findByIdAndDelete(id);
+
+        const posts = await Post.find().sort({ updatedAt: -1 });
+        res.status(200).json(posts);
     } catch (err) {
         res.status(404).json({ message: err.message });
     }
