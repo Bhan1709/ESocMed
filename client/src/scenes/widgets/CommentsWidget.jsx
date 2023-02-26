@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import CommentWidget from "./CommentWidget";
 
-const CommentsWidget = ({ postId, comments, setComments }) => {
+const CommentsWidget = ({ postId, postUserId, comments, setComments }) => {
     const token = useSelector(state => state.token);
 
     const getComments = async () => {
@@ -21,13 +21,19 @@ const CommentsWidget = ({ postId, comments, setComments }) => {
     return <>
         {comments.map(({
             _id,
+            userId,
             comment,
             likes
         }) => (
             <CommentWidget
                 key={_id}
+                commentId={_id}
+                commentUserId={userId}
+                postUserId={postUserId}
                 comment={comment}
                 likes={likes}
+                comments={comments}
+                setComments={setComments}
             />
         ))}
     </>

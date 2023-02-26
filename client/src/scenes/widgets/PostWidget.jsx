@@ -126,6 +126,7 @@ const PostWidget = ({
                 <Divider />
                 <CommentsWidget
                     postId={postId}
+                    postUserId={postUserId}
                     comments={comments}
                     setComments={setComments}
                 />
