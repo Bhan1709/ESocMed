@@ -10,7 +10,9 @@ import {
     Divider,
     IconButton,
     Typography,
-    useTheme
+    useTheme,
+    useMediaQuery,
+    Modal
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
@@ -37,7 +39,7 @@ const PostWidget = ({
     const dispatch = useDispatch();
     const token = useSelector(state => state.token);
     const loggedInUserId = useSelector(state => state.user._id);
-    //const posts = useSelector(state => state.posts);
+    const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
 
@@ -67,6 +69,7 @@ const PostWidget = ({
         });
         const posts = await response.json();
         dispatch(setPosts({ posts }));
+        setComments([]);
     }
 
     return <WidgetWrapper margin="2rem 0">
@@ -100,7 +103,7 @@ const PostWidget = ({
                 </FlexBetween>
 
                 <FlexBetween gap="0.3rem">
-                    <IconButton onClick={() => setIsComments(!isComments)}>
+                    <IconButton onClick={() => setIsComments(true)}>
                         <ChatBubbleOutlineOutlined />
                     </IconButton>
                     <Typography>{commentIds.length}</Typography>
@@ -117,8 +120,16 @@ const PostWidget = ({
                     </IconButton>)}
             </Box>
         </FlexBetween>
-        {isComments && (
-            <Box marginTop="0.5rem">
+        <Modal open={isComments} onClose={() => setIsComments(false)}>
+            <WidgetWrapper
+                sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)",
+                    width: isNonMobileScreens ? "50%" : "70%"
+                }}
+            >
                 <AddCommentWidget
                     postId={postId}
                     setComments={setComments}
@@ -130,8 +141,8 @@ const PostWidget = ({
                     comments={comments}
                     setComments={setComments}
                 />
-            </Box>
-        )}
+            </WidgetWrapper>
+        </Modal>
     </WidgetWrapper>
 }
 

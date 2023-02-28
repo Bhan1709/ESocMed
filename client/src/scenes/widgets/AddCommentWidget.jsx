@@ -34,6 +34,9 @@ const AddCommentWidget = ({ postId, setComments }) => {
                     placeholder="Add a Comment..."
                     onChange={(e) => setComment(e.target.value)}
                     value={comment}
+                    sx={{
+                        flex: "1"
+                    }}
                 />
                 <IconButton
                     disabled={!comment}

@@ -1,15 +1,18 @@
 import {
     FavoriteBorderOutlined,
-    FavoriteOutlined
+    FavoriteOutlined,
+    DeleteOutlineOutlined
 } from "@mui/icons-material";
 import { useTheme, Box, Typography, Divider, IconButton } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+import { setPost } from "state";
 
 const CommentWidget = ({
     commentId,
     commentUserId,
+    postId,
     postUserId,
     comment,
     likes,
@@ -18,6 +21,7 @@ const CommentWidget = ({
 }) => {
     const token = useSelector(state => state.token);
     const loggedInUserId = useSelector(state => state.user._id);
+    const dispatch = useDispatch();
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
     const [isCommentHover, setIsCommentHover] = useState(false);
@@ -42,7 +46,15 @@ const CommentWidget = ({
     }
 
     const deleteComment = async () => {
-
+        const response = await fetch(`${process.env.REACT_APP_SERVER_BASEURL}/comments/${postId}/${commentId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+        const { postComments, updatedPost } = await response.json();
+        dispatch(setPost({ post: updatedPost }));
+        setComments(postComments);
     }
 
     return (
@@ -60,6 +72,11 @@ const CommentWidget = ({
                             : <FavoriteBorderOutlined sx={{ fontSize: "1rem" }} />}
                     </IconButton>
                     <Typography>{likeCount}</Typography>
+                    {(commentUserId === loggedInUserId || postUserId === loggedInUserId) && (
+                        <IconButton onClick={deleteComment} sx={{ marginLeft: "1rem" }}>
+                            <DeleteOutlineOutlined />
+                        </IconButton>
+                    )}
                 </FlexBetween>)}
             </FlexBetween>
             <Divider />

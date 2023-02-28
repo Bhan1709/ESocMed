@@ -1,6 +1,7 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
+import fs from "fs";
 
 /* CREATE */
 export const createPost = async (req, res) => {
@@ -77,6 +78,11 @@ export const deletePost = async (req, res) => {
         const deletedPost = await Post.findByIdAndDelete(id);
 
         deletedPost.comments.forEach(async (commentId) => (await Comment.findByIdAndDelete(commentId)));
+
+        fs.unlink(`./public/assets/${deletedPost.picturePath}`, (err) => {
+            if (err)
+                console.error(err);
+        });
 
         const posts = await Post.find().sort({ createdAt: -1 });
         res.status(200).json(posts);

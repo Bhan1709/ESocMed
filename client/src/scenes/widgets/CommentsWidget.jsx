@@ -29,6 +29,7 @@ const CommentsWidget = ({ postId, postUserId, comments, setComments }) => {
                 key={_id}
                 commentId={_id}
                 commentUserId={userId}
+                postId={postId}
                 postUserId={postUserId}
                 comment={comment}
                 likes={likes}

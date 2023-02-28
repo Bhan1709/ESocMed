@@ -78,8 +78,16 @@ export const deleteComment = async (req, res) => {
 
         deletedComment.replies.forEach(async (replyId) => (await Reply.findByIdAndDelete(replyId)));
 
-        const comments = await Comment.find(postId).sort({ createdAt: -1 });
-        res.status(200).json(comments);
+        const post = await Post.findById(postId);
+        const updatedComments = post.comments.filter(comment => comment.toString() !== id);
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            { comments: updatedComments },
+            { new: true } //returns the modified object rather than original
+        );
+
+        const postComments = await Comment.find({ postId }).sort({ createdAt: -1 });
+        res.status(200).json({ postComments, updatedPost });
     } catch (err) {
         res.status(404).json({ message: err.message });
     }
