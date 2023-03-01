@@ -6,10 +6,13 @@ import {
 import { useTheme, Box, Typography, Divider, IconButton } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { setPost } from "state";
+import UserImage from "./UserImage";
+import ReactTimeAgo from "react-time-ago";
 
-const CommentWidget = ({
+const Comment = ({
     commentId,
     commentUserId,
     postId,
@@ -17,16 +20,35 @@ const CommentWidget = ({
     comment,
     likes,
     comments,
-    setComments
+    setComments,
+    createdAt
 }) => {
+    const [user, setUser] = useState(null);
     const token = useSelector(state => state.token);
     const loggedInUserId = useSelector(state => state.user._id);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
     const [isCommentHover, setIsCommentHover] = useState(false);
 
     const { palette } = useTheme();
+
+    const getUser = async () => {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_BASEURL}/users/${commentUserId}`,
+            {
+                mathod: "GET",
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+        const data = await response.json();
+        console.log(data);
+        setUser(data);
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []); //eslint-disable-line react-hooks/exhaustive-deps
 
     const patchCommentLike = async () => {
         const response = await fetch(`${process.env.REACT_APP_SERVER_BASEURL}/comments/${commentId}/like`, {
@@ -57,15 +79,40 @@ const CommentWidget = ({
         setComments(postComments);
     }
 
+    if (!user) return null;
+
     return (
-        <Box>
-            <FlexBetween
-                onMouseOver={() => setIsCommentHover(true)}
-                onMouseOut={() => setIsCommentHover(false)}
-            >
-                <Typography sx={{ color: palette.neutral.main, margin: "0.5rem 0", paddingLeft: "1rem" }}>
-                    {comment}
-                </Typography>
+        <Box
+            onMouseOver={() => setIsCommentHover(true)}
+            onMouseOut={() => setIsCommentHover(false)}
+        >
+            <FlexBetween gap="1rem" sx={{ margin: "0.5rem" }}>
+                <FlexBetween gap="1rem">
+                    {<UserImage image={user.picturePath} size="45px" />}
+                    <Box
+                        onClick={() => {
+                            navigate(`/profile/${commentUserId}`);
+                            navigate(0);
+                        }}
+                    >
+                        <Typography
+                            color={palette.neutral.main}
+                            variant="h5"
+                            fontWeight="500"
+                            sx={{
+                                "&:hover": {
+                                    color: palette.primary.light,
+                                    cursor: "pointer"
+                                }
+                            }}
+                        >
+                            {`${user.firstName} ${user.lastName}`}
+                        </Typography>
+                        <Typography color={palette.neutral.medium} fontSize="0.75rem">
+                            <ReactTimeAgo date={createdAt} locale="en-US" />
+                        </Typography>
+                    </Box>
+                </FlexBetween>
                 {isCommentHover && (<FlexBetween>
                     <IconButton onClick={patchCommentLike}>
                         {isLiked ? <FavoriteOutlined sx={{ color: palette.primary.main, fontSize: "1rem" }} />
@@ -79,9 +126,12 @@ const CommentWidget = ({
                     )}
                 </FlexBetween>)}
             </FlexBetween>
+            <Typography color={palette.neutral.main} sx={{ margin: "0.5rem" }}>
+                {comment}
+            </Typography>
             <Divider />
         </Box>
     );
 }
 
-export default CommentWidget;
+export default Comment;

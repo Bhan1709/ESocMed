@@ -20,8 +20,9 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost, setPosts } from "state";
-import AddCommentWidget from "./AddCommentWidget";
+import AddComment from "../../components/AddComment";
 import CommentsWidget from "./CommentsWidget";
+import LikesWidget from "./LikesWidget";
 
 const PostWidget = ({
     postId,
@@ -35,6 +36,7 @@ const PostWidget = ({
     commentIds
 }) => {
     const [isComments, setIsComments] = useState(false);
+    const [isLikes, setIsLikes] = useState(false);
     const [comments, setComments] = useState([]);
     const dispatch = useDispatch();
     const token = useSelector(state => state.token);
@@ -99,14 +101,34 @@ const PostWidget = ({
                         {isLiked ? <FavoriteOutlined sx={{ color: primary }} />
                             : <FavoriteBorderOutlined />}
                     </IconButton>
-                    <Typography>{likeCount}</Typography>
+                    <Typography
+                        onClick={() => setIsLikes(true)}
+                        sx={{
+                            "&:hover": {
+                                color: palette.neutral.medium,
+                                cursor: "pointer"
+                            }
+                        }}
+                    >
+                        {likeCount}
+                    </Typography>
                 </FlexBetween>
 
                 <FlexBetween gap="0.3rem">
                     <IconButton onClick={() => setIsComments(true)}>
                         <ChatBubbleOutlineOutlined />
                     </IconButton>
-                    <Typography>{commentIds.length}</Typography>
+                    <Typography
+                        onClick={() => setIsComments(true)}
+                        sx={{
+                            "&:hover": {
+                                color: palette.neutral.medium,
+                                cursor: "pointer"
+                            }
+                        }}
+                    >
+                        {commentIds.length}
+                    </Typography>
                 </FlexBetween>
 
             </FlexBetween>
@@ -130,7 +152,7 @@ const PostWidget = ({
                     width: isNonMobileScreens ? "50%" : "70%"
                 }}
             >
-                <AddCommentWidget
+                <AddComment
                     postId={postId}
                     setComments={setComments}
                 />
@@ -141,6 +163,19 @@ const PostWidget = ({
                     comments={comments}
                     setComments={setComments}
                 />
+            </WidgetWrapper>
+        </Modal>
+        <Modal open={isLikes} onClose={() => setIsLikes(false)}>
+            <WidgetWrapper
+                sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)",
+                    width: isNonMobileScreens ? "40%" : "60%"
+                }}
+            >
+                <LikesWidget likes={Object.keys(likes)} />
             </WidgetWrapper>
         </Modal>
     </WidgetWrapper>

@@ -3,10 +3,10 @@ import { IconButton, InputBase } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 import { useState } from "react";
-import WidgetWrapper from "../../components/WidgetWrapper";
+import WidgetWrapper from "./WidgetWrapper";
 import FlexBetween from "components/FlexBetween";
 
-const AddCommentWidget = ({ postId, setComments }) => {
+const AddComment = ({ postId, setComments }) => {
     const dispatch = useDispatch();
     const loggedInUserId = useSelector(state => state.user._id);
     const token = useSelector(state => state.token);
@@ -49,4 +49,4 @@ const AddCommentWidget = ({ postId, setComments }) => {
     );
 }
 
-export default AddCommentWidget;
+export default AddComment;

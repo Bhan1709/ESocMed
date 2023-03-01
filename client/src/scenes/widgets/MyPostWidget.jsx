@@ -21,9 +21,10 @@ import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setPosts } from "state";
+import useOnClickOutside from "utils/useOnClickOutside";
 
 const MyPostWidget = ({ picturePath }) => {
     const dispatch = useDispatch();
@@ -36,6 +37,11 @@ const MyPostWidget = ({ picturePath }) => {
     const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
     const mediumMain = palette.neutral.mediumMain;
     const medium = palette.neutral.medium;
+
+    const addPostRef = useRef();
+    useOnClickOutside(addPostRef, () => {
+        if (!image) setIsImage(false)
+    });
 
     const handlePost = async () => {
         const formData = new FormData();
@@ -57,7 +63,7 @@ const MyPostWidget = ({ picturePath }) => {
         setPost("");
     }
 
-    return <WidgetWrapper>
+    return <WidgetWrapper ref={addPostRef}>
         <FlexBetween gap="1.5rem">
             <UserImage image={picturePath} />
             <InputBase
@@ -120,12 +126,14 @@ const MyPostWidget = ({ picturePath }) => {
         <Divider sx={{ margin: "1.25rem 0" }} />
 
         <FlexBetween>
-            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-                <ImageOutlined sx={{ color: mediumMain }} />
-                <Typography
-                    color={mediumMain}
-                    sx={{ "&:hover": { cursor: "pointer", color: medium } }}
-                >
+            <FlexBetween
+                gap="0.25rem"
+                onClick={() => { if (!image) setIsImage(!isImage) }}
+                sx={!image ? { color: mediumMain, "&:hover": { cursor: "pointer", color: medium } } :
+                    { color: mediumMain }}
+            >
+                <ImageOutlined />
+                <Typography>
                     Image
                 </Typography>
             </FlexBetween>

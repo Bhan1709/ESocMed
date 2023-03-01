@@ -17,6 +17,7 @@ const UserWidget = ({ userId, picturePath }) => {
     const { palette } = useTheme();
     const navigate = useNavigate();
     const token = useSelector(state => state.token);
+    const loggedInUserId = useSelector(state => state.user._id);
     const dark = palette.neutral.dark;
     const medium = palette.neutral.medium;
     const main = palette.neutral.main;
@@ -40,6 +41,7 @@ const UserWidget = ({ userId, picturePath }) => {
         return null;
 
     const {
+        _id,
         firstName,
         lastName,
         location,
@@ -78,7 +80,7 @@ const UserWidget = ({ userId, picturePath }) => {
                         </Typography>
                     </Box>
                 </FlexBetween>
-                <ManageAccountsOutlined />
+                {(loggedInUserId === _id) && <ManageAccountsOutlined />}
             </FlexBetween>
 
             <Divider />

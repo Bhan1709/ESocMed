@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
-import CommentWidget from "./CommentWidget";
+import Comment from "../../components/Comment";
 
 const CommentsWidget = ({ postId, postUserId, comments, setComments }) => {
     const token = useSelector(state => state.token);
@@ -23,9 +23,10 @@ const CommentsWidget = ({ postId, postUserId, comments, setComments }) => {
             _id,
             userId,
             comment,
-            likes
+            likes,
+            createdAt
         }) => (
-            <CommentWidget
+            <Comment
                 key={_id}
                 commentId={_id}
                 commentUserId={userId}
@@ -35,6 +36,7 @@ const CommentsWidget = ({ postId, postUserId, comments, setComments }) => {
                 likes={likes}
                 comments={comments}
                 setComments={setComments}
+                createdAt={createdAt}
             />
         ))}
     </>

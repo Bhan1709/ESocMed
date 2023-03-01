@@ -12,7 +12,6 @@ export const createComment = async (req, res) => {
         const newComment = new Comment({
             postId,
             userId,
-            userName: `${user.firstName} ${user.lastName}`,
             comment,
             likes: {},
             replies: []
