@@ -3,13 +3,15 @@ import {
     FavoriteOutlined,
     DeleteOutlineOutlined
 } from "@mui/icons-material";
-import { useTheme, Box, Typography, Divider, IconButton } from "@mui/material";
+import { useTheme, Box, Typography, Divider, IconButton, Modal, useMediaQuery } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
+import WidgetWrapper from "./WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { setPost } from "state";
 import UserImage from "./UserImage";
+import LikesWidget from "scenes/widgets/LikesWidget";
 import ReactTimeAgo from "react-time-ago";
 
 const Comment = ({
@@ -24,6 +26,7 @@ const Comment = ({
     createdAt
 }) => {
     const [user, setUser] = useState(null);
+    const [isLikes, setIsLikes] = useState(false);
     const token = useSelector(state => state.token);
     const loggedInUserId = useSelector(state => state.user._id);
     const dispatch = useDispatch();
@@ -31,6 +34,7 @@ const Comment = ({
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
     const [isCommentHover, setIsCommentHover] = useState(false);
+    const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
     const { palette } = useTheme();
 
@@ -42,7 +46,6 @@ const Comment = ({
             }
         );
         const data = await response.json();
-        console.log(data);
         setUser(data);
     };
 
@@ -113,12 +116,23 @@ const Comment = ({
                         </Typography>
                     </Box>
                 </FlexBetween>
-                {isCommentHover && (<FlexBetween>
+                {(isCommentHover || !isNonMobileScreens) && (<FlexBetween>
                     <IconButton onClick={patchCommentLike}>
                         {isLiked ? <FavoriteOutlined sx={{ color: palette.primary.main, fontSize: "1rem" }} />
                             : <FavoriteBorderOutlined sx={{ fontSize: "1rem" }} />}
                     </IconButton>
-                    <Typography>{likeCount}</Typography>
+                    {likeCount > 0 ? <Typography
+                        onClick={() => setIsLikes(true)}
+                        sx={{
+                            "&:hover": {
+                                color: palette.neutral.medium,
+                                cursor: "pointer"
+                            }
+                        }}
+                    >
+                        {likeCount}
+                    </Typography> :
+                        <Typography>{likeCount}</Typography>}
                     {(commentUserId === loggedInUserId || postUserId === loggedInUserId) && (
                         <IconButton onClick={deleteComment} sx={{ marginLeft: "1rem" }}>
                             <DeleteOutlineOutlined />
@@ -130,6 +144,19 @@ const Comment = ({
                 {comment}
             </Typography>
             <Divider />
+            <Modal open={isLikes} onClose={() => setIsLikes(false)}>
+                <WidgetWrapper
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%,-50%)",
+                        width: isNonMobileScreens ? "40%" : "60%"
+                    }}
+                >
+                    <LikesWidget likes={Object.keys(likes)} />
+                </WidgetWrapper>
+            </Modal>
         </Box>
     );
 }

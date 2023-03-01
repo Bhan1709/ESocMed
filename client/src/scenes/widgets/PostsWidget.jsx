@@ -59,6 +59,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                 userPicturePath={userPicturePath}
                 likes={likes}
                 commentIds={comments}
+                isProfile={isProfile}
             />
         ))}
     </>

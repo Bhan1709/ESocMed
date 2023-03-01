@@ -3,8 +3,8 @@ import { IconButton, InputBase } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 import { useState } from "react";
-import WidgetWrapper from "./WidgetWrapper";
 import FlexBetween from "components/FlexBetween";
+import WidgetWrapper from "./WidgetWrapper";
 
 const AddComment = ({ postId, setComments }) => {
     const dispatch = useDispatch();

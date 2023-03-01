@@ -75,6 +75,7 @@ export const likePost = async (req, res) => {
 export const deletePost = async (req, res) => {
     try {
         const { id } = req.params;
+        const { isProfile, userId } = req.body;
         const deletedPost = await Post.findByIdAndDelete(id);
 
         deletedPost.comments.forEach(async (commentId) => (await Comment.findByIdAndDelete(commentId)));
@@ -84,7 +85,10 @@ export const deletePost = async (req, res) => {
                 console.error(err);
         });
 
-        const posts = await Post.find().sort({ createdAt: -1 });
+        let filter = {};
+        if (isProfile)
+            filter = { userId };
+        const posts = await Post.find(filter).sort({ createdAt: -1 });
         res.status(200).json(posts);
     } catch (err) {
         res.status(404).json({ message: err.message });

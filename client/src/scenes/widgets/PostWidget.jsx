@@ -3,7 +3,8 @@ import {
     FavoriteBorderOutlined,
     FavoriteOutlined,
     ShareOutlined,
-    DeleteOutlined
+    DeleteOutlined,
+    Close
 } from "@mui/icons-material";
 import {
     Box,
@@ -33,7 +34,8 @@ const PostWidget = ({
     picturePath,
     userPicturePath,
     likes,
-    commentIds
+    commentIds,
+    isProfile
 }) => {
     const [isComments, setIsComments] = useState(false);
     const [isLikes, setIsLikes] = useState(false);
@@ -67,7 +69,8 @@ const PostWidget = ({
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
-            }
+            },
+            body: JSON.stringify({ isProfile: isProfile, userId: loggedInUserId })
         });
         const posts = await response.json();
         dispatch(setPosts({ posts }));
@@ -101,7 +104,7 @@ const PostWidget = ({
                         {isLiked ? <FavoriteOutlined sx={{ color: primary }} />
                             : <FavoriteBorderOutlined />}
                     </IconButton>
-                    <Typography
+                    {likeCount > 0 ? <Typography
                         onClick={() => setIsLikes(true)}
                         sx={{
                             "&:hover": {
@@ -111,7 +114,8 @@ const PostWidget = ({
                         }}
                     >
                         {likeCount}
-                    </Typography>
+                    </Typography> :
+                        <Typography>{likeCount}</Typography>}
                 </FlexBetween>
 
                 <FlexBetween gap="0.3rem">
@@ -149,7 +153,7 @@ const PostWidget = ({
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%,-50%)",
-                    width: isNonMobileScreens ? "50%" : "70%"
+                    width: isNonMobileScreens ? "50%" : "70%",
                 }}
             >
                 <AddComment
