@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
     Box,
     IconButton,
@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
-import useOnClickOutside from "utils/useOnClickOutside";
 
 const NavBar = () => {
     const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -39,8 +38,6 @@ const NavBar = () => {
     const background = theme.palette.background.default;
     const primaryLight = theme.palette.primary.light;
     const alt = theme.palette.background.alt;
-    const mobileMenuRef = useRef();
-    useOnClickOutside(mobileMenuRef, () => setIsMobileMenuToggled(false));
 
     const fullName = `${user.firstName} ${user.lastName}`;
 
@@ -104,7 +101,14 @@ const NavBar = () => {
                         <MenuItem value={fullName}>
                             <Typography>{fullName}</Typography>
                         </MenuItem>
-                        <MenuItem onClick={() => setLogout()}>Log Out</MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                dispatch(setLogout())
+                                navigate(`/`)
+                            }}
+                        >
+                            Log Out
+                        </MenuItem>
                     </Select>
                 </FormControl>
             </FlexBetween>
@@ -126,7 +130,6 @@ const NavBar = () => {
                 maxWidth="500px"
                 minWidth="20%"
                 backgroundColor={background}
-                ref={mobileMenuRef}
             >
                 {/* Close Icon */}
                 <Box display="flex" justifyContent="flex-end" padding="1rem">
@@ -178,7 +181,14 @@ const NavBar = () => {
                             <MenuItem value={fullName}>
                                 <Typography>{fullName}</Typography>
                             </MenuItem>
-                            <MenuItem onClick={() => setLogout()}>Log Out</MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    dispatch(setLogout())
+                                    navigate(`/`)
+                                }}
+                            >
+                                Log Out
+                            </MenuItem>
                         </Select>
                     </FormControl>
                 </FlexBetween>

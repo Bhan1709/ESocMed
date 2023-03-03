@@ -4,15 +4,12 @@ import {
     FavoriteOutlined,
     ShareOutlined,
     DeleteOutlined,
-    Close
 } from "@mui/icons-material";
 import {
     Box,
-    Divider,
     IconButton,
     Typography,
     useTheme,
-    useMediaQuery,
     Modal
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
@@ -21,7 +18,6 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost, setPosts } from "state";
-import AddComment from "../../components/AddComment";
 import CommentsWidget from "./CommentsWidget";
 import LikesWidget from "./LikesWidget";
 
@@ -43,7 +39,6 @@ const PostWidget = ({
     const dispatch = useDispatch();
     const token = useSelector(state => state.token);
     const loggedInUserId = useSelector(state => state.user._id);
-    const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
     const isLiked = Boolean(likes[loggedInUserId]);
     const likeCount = Object.keys(likes).length;
 
@@ -147,40 +142,16 @@ const PostWidget = ({
             </Box>
         </FlexBetween>
         <Modal open={isComments} onClose={() => setIsComments(false)}>
-            <WidgetWrapper
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-                    width: isNonMobileScreens ? "50%" : "70%",
-                }}
-            >
-                <AddComment
-                    postId={postId}
-                    setComments={setComments}
-                />
-                <Divider />
-                <CommentsWidget
-                    postId={postId}
-                    postUserId={postUserId}
-                    comments={comments}
-                    setComments={setComments}
-                />
-            </WidgetWrapper>
+            <CommentsWidget
+                postId={postId}
+                postUserId={postUserId}
+                comments={comments}
+                setComments={setComments}
+                setIsComments={setIsComments}
+            />
         </Modal>
         <Modal open={isLikes} onClose={() => setIsLikes(false)}>
-            <WidgetWrapper
-                sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%,-50%)",
-                    width: isNonMobileScreens ? "40%" : "60%"
-                }}
-            >
-                <LikesWidget likes={Object.keys(likes)} />
-            </WidgetWrapper>
+            <LikesWidget likes={Object.keys(likes)} setIsLikes={setIsLikes} />
         </Modal>
     </WidgetWrapper>
 }

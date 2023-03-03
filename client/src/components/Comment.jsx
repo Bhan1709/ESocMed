@@ -5,7 +5,6 @@ import {
 } from "@mui/icons-material";
 import { useTheme, Box, Typography, Divider, IconButton, Modal, useMediaQuery } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
-import WidgetWrapper from "./WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -145,17 +144,7 @@ const Comment = ({
             </Typography>
             <Divider />
             <Modal open={isLikes} onClose={() => setIsLikes(false)}>
-                <WidgetWrapper
-                    sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%,-50%)",
-                        width: isNonMobileScreens ? "40%" : "60%"
-                    }}
-                >
-                    <LikesWidget likes={Object.keys(likes)} />
-                </WidgetWrapper>
+                <LikesWidget likes={Object.keys(likes)} setIsLikes={setIsLikes} />
             </Modal>
         </Box>
     );
