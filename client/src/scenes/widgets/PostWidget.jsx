@@ -61,11 +61,12 @@ const PostWidget = ({
 
     const deletePost = async () => {
         const response = await fetch(`${process.env.REACT_APP_SERVER_BASEURL}/posts/${postId}`, {
-            method: "DELETE",
+            method: "PATCH",
             headers: {
                 Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify({ isProfile: isProfile, userId: loggedInUserId })
+            body: JSON.stringify({ isProfile, userId: loggedInUserId })
         });
         const posts = await response.json();
         dispatch(setPosts({ posts }));
@@ -142,16 +143,20 @@ const PostWidget = ({
             </Box>
         </FlexBetween>
         <Modal open={isComments} onClose={() => setIsComments(false)}>
-            <CommentsWidget
-                postId={postId}
-                postUserId={postUserId}
-                comments={comments}
-                setComments={setComments}
-                setIsComments={setIsComments}
-            />
+            <>
+                <CommentsWidget
+                    postId={postId}
+                    postUserId={postUserId}
+                    comments={comments}
+                    setComments={setComments}
+                    setIsComments={setIsComments}
+                />
+            </>
         </Modal>
         <Modal open={isLikes} onClose={() => setIsLikes(false)}>
-            <LikesWidget likes={Object.keys(likes)} setIsLikes={setIsLikes} />
+            <>
+                <LikesWidget likes={Object.keys(likes)} setIsLikes={setIsLikes} />
+            </>
         </Modal>
     </WidgetWrapper>
 }

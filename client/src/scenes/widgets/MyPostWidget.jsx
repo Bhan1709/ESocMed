@@ -26,7 +26,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setPosts } from "state";
 import useOnClickOutside from "utils/useOnClickOutside";
 
-const MyPostWidget = ({ picturePath }) => {
+const MyPostWidget = ({ picturePath, isProfile = false }) => {
     const dispatch = useDispatch();
     const [isImage, setIsImage] = useState(false);
     const [image, setImage] = useState(null);
@@ -47,6 +47,7 @@ const MyPostWidget = ({ picturePath }) => {
         const formData = new FormData();
         formData.append("userId", _id);
         formData.append("description", post);
+        formData.append("isProfile", isProfile);
         if (image) {
             formData.append("picture", image);
             formData.append("picturePath", image.name);

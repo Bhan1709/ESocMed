@@ -95,7 +95,7 @@ const Form = () => {
                 user: loggedIn.user,
                 token: loggedIn.token,
             }));
-            navigate("/home");
+            navigate("/");
         }
     };
 

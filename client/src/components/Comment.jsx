@@ -94,7 +94,6 @@ const Comment = ({
                     <Box
                         onClick={() => {
                             navigate(`/profile/${commentUserId}`);
-                            navigate(0);
                         }}
                     >
                         <Typography

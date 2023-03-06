@@ -6,7 +6,7 @@ import fs from "fs";
 /* CREATE */
 export const createPost = async (req, res) => {
     try {
-        const { userId, description, picturePath } = req.body;
+        const { userId, description, picturePath, isProfile } = req.body;
         const user = await User.findById(userId);
         const newPost = new Post({
             userId,
@@ -20,7 +20,13 @@ export const createPost = async (req, res) => {
         });
         await newPost.save();
 
-        const posts = await Post.find().sort({ createdAt: -1 });
+        let posts = [];
+        if (isProfile) {
+            posts = await Post.find({ userId }).sort({ createdAt: -1 });
+        }
+        else
+            posts = await Post.find().sort({ createdAt: -1 });
+
         res.status(201).json(posts);
     } catch (err) {
         res.status(409).json({ message: err.message });
@@ -80,15 +86,20 @@ export const deletePost = async (req, res) => {
 
         deletedPost.comments.forEach(async (commentId) => (await Comment.findByIdAndDelete(commentId)));
 
-        fs.unlink(`./public/assets/${deletedPost.picturePath}`, (err) => {
-            if (err)
-                console.error(err);
-        });
+        if (deletedPost.picturePath) {
+            fs.unlink(`./public/assets/${deletedPost.picturePath}`, (err) => {
+                if (err)
+                    console.error(err);
+            });
+        }
 
-        let filter = {};
-        if (isProfile)
-            filter = { userId };
-        const posts = await Post.find(filter).sort({ createdAt: -1 });
+        let posts = [];
+        if (isProfile) {
+            posts = await Post.find({ userId }).sort({ createdAt: -1 });
+        }
+        else
+            posts = await Post.find().sort({ createdAt: -1 });
+
         res.status(200).json(posts);
     } catch (err) {
         res.status(404).json({ message: err.message });
